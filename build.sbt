@@ -265,7 +265,8 @@ lazy val finatraServer: Project = (project in file("server/finatra-server"))
       "com.twitter" %% "inject-app" % Versions.finatra % "test" classifier "tests",
       "com.twitter" %% "inject-core" % Versions.finatra % "test" classifier "tests",
       "com.twitter" %% "inject-modules" % Versions.finatra % "test" classifier "tests"
-    )
+    ),
+    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
   )
   .settings(only2_12settings)
   .dependsOn(core, serverTests % "test")
