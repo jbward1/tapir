@@ -28,7 +28,7 @@ class Http4sServerTests extends ServerTests[IO, EntityBody[IO], HttpRoutes[IO]] 
   override def route[I, E, O](
       e: Endpoint[I, E, O, EntityBody[IO]],
       fn: I => IO[Either[E, O]],
-      decodeFailureHandler: Option[DecodeFailureHandler[Any]] = None
+      decodeFailureHandler: Option[DecodeFailureHandler] = None
   ): HttpRoutes[IO] = {
     implicit val serverOptions: Http4sServerOptions[IO] = Http4sServerOptions
       .default[IO]
@@ -66,9 +66,7 @@ class Http4sServerTests extends ServerTests[IO, EntityBody[IO], HttpRoutes[IO]] 
         .bindHttp(port, "localhost")
         .withHttpApp(Router("/api" -> routes).orNotFound)
         .resource
-        .use { _ =>
-          basicRequest.get(uri"http://localhost:$port/api/test/router").send().map(_.body shouldBe Right("ok"))
-        }
+        .use { _ => basicRequest.get(uri"http://localhost:$port/api/test/router").send().map(_.body shouldBe Right("ok")) }
         .unsafeRunSync()
     }
   }

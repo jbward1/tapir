@@ -1,9 +1,9 @@
 package sttp.tapir.server.finatra
 
 import com.twitter.finagle.http.Request
-import sttp.model.Method
-import sttp.tapir.internal.server.DecodeInputsContext
+import sttp.model.{Method, MultiQueryParams}
 import sttp.tapir.model.ServerRequest
+import sttp.tapir.server.internal.DecodeInputsContext
 
 class FinatraDecodeInputsContext(request: Request, pathConsumed: Int = 0) extends DecodeInputsContext {
   override def method: Method = Method(request.method.toString.toUpperCase)
@@ -23,7 +23,7 @@ class FinatraDecodeInputsContext(request: Request, pathConsumed: Int = 0) extend
   override def header(name: String): List[String] = request.headerMap.getAll(name).toList
   override def headers: Seq[(String, String)] = request.headerMap.toList
   override def queryParameter(name: String): Seq[String] = request.params.getAll(name).toSeq
-  override def queryParameters: Map[String, Seq[String]] = request.params.toList.groupBy(_._1).mapValues(_.map(_._2))
+  override def queryParameters: MultiQueryParams = MultiQueryParams.fromMultiMap(request.params.toList.groupBy(_._1).mapValues(_.map(_._2)))
   override def bodyStream: Any = request.content
   override def serverRequest: ServerRequest = new FinatraServerRequest(request)
 }
